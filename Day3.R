@@ -8,7 +8,7 @@ input <- read_csv("Day3.txt", col_names = FALSE,
 test <- read_csv("Day3_Example.txt", col_names = FALSE, 
                   col_types = cols(X1 = col_character()))
 
-# Do they all have the same lenght?
+# Do they all have the same length?
 
 var(apply(test, 1, function(x) nchar(x)))
 var(apply(input, 1, function(x) nchar(x)))
@@ -44,3 +44,88 @@ for(l in 1:n_bank){
   sum <- sum + as.numeric(paste(data_df[l, id[l,1]], data_df[l, id[l,2]], sep = ""))
 };sum
 
+
+
+# Part Two:
+rm(list=ls())
+
+library(readr)
+input <- read_csv("Day3.txt", col_names = FALSE, 
+                  col_types = cols(X1 = col_character()))
+test <- read_csv("Day3_Example.txt", col_names = FALSE, 
+                 col_types = cols(X1 = col_character()))
+
+# Do they all have the same length?
+
+var(apply(test, 1, function(x) nchar(x)))
+var(apply(input, 1, function(x) nchar(x)))
+
+data <- input
+n_bank <- nrow(data)
+n_bat <- nchar(data[1,1])
+
+data_df <- matrix(NA, ncol=n_bat, nrow=n_bank)
+
+for(d in 1:n_bat){
+  data_df[,d] <- as.numeric(substring(data$X1, d,d))
+}
+
+# Voglio tenere 12 cifre, le quali sono le piu' grandi possibili.
+# Tolgo quindi tutte le cifre basse, stando attento
+# a mantenere almeno 12 cifre. Mi baso sulle frequenze 
+# retrocumulate.
+
+# Questo riduce la complessita' del problema.
+sum <- 0
+for(i in 1:nrow(data_df)){
+  bank_i <- data_df[i,]
+  
+  how_many <- length(unique(bank_i))
+  table_batteries <- table(bank_i)[how_many:1]
+  min_i <- 
+    as.numeric(names(which(cumsum(table_batteries) >=12)[1]))
+  
+  bank_i_sub <- bank_i[bank_i %in% (9:min_i)]
+  
+  # Cerco la combinazione migliore (che chiamo ID):
+  how_many_sub <- length(bank_i_sub)
+  ID <- numeric(12)
+  
+  for(t in 1:12){
+    print(t)
+    
+    bank_i_to_inspect <- 
+      bank_i_sub[1:(how_many_sub - 12 - t - 1)]# <---
+    
+    ID[t] <-
+      bank_i_to_inspect[which.max(bank_i_to_inspect)]
+    
+    bank_i_sub <- bank_i_sub[-which(bank_i_sub == ID[t])[1]]
+    how_many_sub <- length(bank_i_sub)
+    
+  }
+  
+  sum <- sum + 
+    as.numeric(paste(data_df[l, id[l,1]], data_df[l, id[l,2]], sep = ""))
+}
+
+
+
+
+
+
+id <- 
+  t(apply(data_df, 1, function(x) {
+    id_max <- which.max(x)
+    if(id_max == n_bat){
+      # Cerca il max precedente
+      id_max_2 <- which.max(x[-id_max])
+      out_id <- c(id_max_2, id_max)
+    } else {
+      # Cerca il max successivo{
+      id_max_2 <- which.max(x[(id_max+1):n_bat])
+      out_id <- c(id_max, id_max_2+id_max)
+    }
+    return(out_id)
+  }
+  ))
