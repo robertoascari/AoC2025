@@ -71,6 +71,7 @@ count
 
 
 # Part Two:
+rm(list=setdiff(ls(), c("input", "test")))
 
 data <- input
 N <- nchar(data[1,1])

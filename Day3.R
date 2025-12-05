@@ -47,18 +47,7 @@ for(l in 1:n_bank){
 
 
 # Part Two:
-rm(list=ls())
-
-library(readr)
-input <- read_csv("Day3.txt", col_names = FALSE, 
-                  col_types = cols(X1 = col_character()))
-test <- read_csv("Day3_Example.txt", col_names = FALSE, 
-                 col_types = cols(X1 = col_character()))
-
-# Do they all have the same length?
-
-var(apply(test, 1, function(x) nchar(x)))
-var(apply(input, 1, function(x) nchar(x)))
+rm(list=setdiff(ls(), c("input", "test")))
 
 data <- input
 n_bank <- nrow(data)
@@ -87,15 +76,6 @@ sum <- 0
 for(i in 1:nrow(data_df)){
   bank_i_sub <- data_df[i,]
   
-  # how_many <- length(unique(bank_i))
-  # table_batteries <- table(bank_i)[how_many:1]
-  # 
-  # min_i <- 
-  #   as.numeric(names(which(cumsum(table_batteries) >= 12)[1]))
-  # 
-  # bank_i_sub <- bank_i[bank_i %in% (9:min_i)]
-  # 
-  # Cerco la combinazione migliore (che chiamo ID):
   how_many_sub <- length(bank_i_sub)
   ID <- numeric(12)
   
