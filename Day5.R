@@ -35,6 +35,8 @@ for(ing in 1:n_ingr){
 sum(is_fresh)
 
 # Part Two:
+library(tidyverse)
+options(scipen=999)
 
 rm(list=setdiff(ls(), c("input", "test")))
 
@@ -55,24 +57,27 @@ ranges_df <- as.data.frame(ranges_df)
 ranges_df <- 
   ranges_df %>% arrange(Min)
 
-library(tidyverse)
-options(scipen=999)
 
 # If min(i) <= max(i-1), then collapse the two rows
 # into (min(i-1), max(i))
 ranges_df_2 <- ranges_df
-id_remove <- c()
-
-for(d in 2:nrow(ranges_df_2)){
-  if(ranges_df_2$Min[d] <= ranges_df_2$Max[d-1]){
+cond <- T
+d <- 2
+while(cond){
+  
+  if(ranges_df_2$Min[d] <= ranges_df_2$Max[d-1] &
+     ranges_df_2$Max[d] <= ranges_df_2$Max[d-1]){
+    #ranges_df_2$Max[d-1] <- ranges_df_2$Max[d]
+    ranges_df_2 <- ranges_df_2[-d,]
+  } else if(ranges_df_2$Min[d] <= ranges_df_2$Max[d-1] &
+             ranges_df_2$Max[d] > ranges_df_2$Max[d-1]){
     ranges_df_2$Max[d-1] <- ranges_df_2$Max[d]
-    id_remove <- c(id_remove, d)
+    ranges_df_2 <- ranges_df_2[-d,]
+  } else {
+    d <- d + 1
   }
+  cond <- !(d > nrow(ranges_df_2))
 }
-ranges_df_2 <- ranges_df_2[-id_remove,]
+
 sum(ranges_df_2[,2] - ranges_df_2[,1]) + 
   nrow(ranges_df_2)
-
-# 291970192690882: too low
-# 291970192690974: too low
-# 437373143374891: too high
