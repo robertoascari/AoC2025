@@ -90,7 +90,7 @@ rm(list=setdiff(ls(), c("input","test", "jolt", "buttons")))
 library(gtools)
 
 
-data <- test
+data <- input
 
 
 lights <- vector(mode = "list", length = nrow(data))
@@ -138,9 +138,6 @@ press_jolt <- function(jolt, button){
   
   return(jolt)
 }
-
-
-combinations(n = length(v), r = 2, v = v, repeats.allowed = TRUE)
 
 min_k <- numeric(length(jolt))
 for(l in 1:length(jolt)){
